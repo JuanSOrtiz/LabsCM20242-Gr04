@@ -1,5 +1,6 @@
 package com.example.labs20242_gr04
 
+import androidx.compose.ui.res.stringResource
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -37,15 +38,29 @@ class PersonalDataActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalDataScreen() {
+    val masculino = stringResource(R.string.masculino)
+    val primaria = stringResource(R.string.primaria)
+    val personalError = stringResource(R.string.personal_error)
+
+
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf<Long?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
-    var selectedGender by remember { mutableStateOf("Masculino") }
-    val genderOptions = listOf("Masculino", "Femenino", "Otro")
-    var educationLevel by remember { mutableStateOf("Primaria") }
+    var selectedGender by remember { mutableStateOf(masculino) }
+    val genderOptions = listOf(
+        stringResource(R.string.masculino),
+        stringResource(R.string.femenino),
+        stringResource(R.string.otro)
+    )
+    var educationLevel by remember { mutableStateOf(primaria) }
     var expanded by remember { mutableStateOf(false) }
-    val educationLevels = listOf("Primaria", "Secundaria", "Universitaria", "Posgrado")
+    val educationLevels = listOf(
+        stringResource(R.string.primaria),
+        stringResource(R.string.secundaria),
+        stringResource(R.string.universitaria),
+        stringResource(R.string.posgrado)
+    )
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
@@ -55,7 +70,7 @@ fun PersonalDataScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Datos Personales") }
+                title = { Text(text = stringResource(R.string.personal_data_title)) }
             )
         }
     ) { paddingValues ->
@@ -66,11 +81,11 @@ fun PersonalDataScreen() {
                 .padding(16.dp)
                 .verticalScroll(scrollState)
         ) {
-// Campo Nombres
+            // Campo Nombres
             OutlinedTextField(
                 value = firstName,
                 onValueChange = { firstName = it },
-                label = { Text("Nombres*") },
+                label = { Text(stringResource(R.string.first_name_label)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     capitalization = KeyboardCapitalization.Words,
                     imeAction = ImeAction.Next,
@@ -86,7 +101,7 @@ fun PersonalDataScreen() {
             OutlinedTextField(
                 value = lastName,
                 onValueChange = { lastName = it },
-                label = { Text("Apellidos*") },
+                label = { Text(stringResource(R.string.last_name_label)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     capitalization = KeyboardCapitalization.Words,
                     imeAction = ImeAction.Next,
@@ -99,9 +114,9 @@ fun PersonalDataScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             // RadioButton Sexo
-            Text(text = "Sexo")
+            Text(text = stringResource(R.string.gender_label))
             genderOptions.forEach { gender ->
-                Row {
+                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                     RadioButton(
                         selected = selectedGender == gender,
                         onClick = { selectedGender = gender }
@@ -115,16 +130,16 @@ fun PersonalDataScreen() {
             // DatePicker Fecha de Nacimiento
             if (selectedDate != null) {
                 Text(
-                    text = "Fecha de nacimiento: ${formatDate(selectedDate)}",
+                    text = stringResource(R.string.birthdate_selected, formatDate(selectedDate)),
                     style = MaterialTheme.typography.bodyLarge
                 )
             } else {
-                Text(text = "No hay fecha seleccionada", style = MaterialTheme.typography.bodyLarge)
+                Text(text = stringResource(R.string.birthdate_not_selected), style = MaterialTheme.typography.bodyLarge)
             }
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(onClick = { showDatePicker = true }) {
-                Text(text = "Seleccionar fecha de nacimiento*")
+                Text(text = stringResource(R.string.select_birthdate_button))
             }
 
             if (showDatePicker) {
@@ -148,7 +163,7 @@ fun PersonalDataScreen() {
                 OutlinedTextField(
                     value = educationLevel,
                     onValueChange = { },
-                    label = { Text("Grado de Escolaridad*") },
+                    label = { Text(stringResource(R.string.education_level_label)) },
                     readOnly = true,
                     modifier = Modifier
                         .menuAnchor()
@@ -180,7 +195,7 @@ fun PersonalDataScreen() {
             Button(
                 onClick = {
                     if (validateFields(firstName, lastName, selectedDate)) {
-                        logUserData(firstName, lastName, selectedDate, selectedGender, educationLevel)
+                        logUserData(context, firstName, lastName, selectedDate, selectedGender, educationLevel)
 
                         // Pasar los datos a ContactDataActivity
                         val intent = Intent(context, ContactDataActivity::class.java).apply {
@@ -192,7 +207,7 @@ fun PersonalDataScreen() {
                         }
                         context.startActivity(intent)
                     } else {
-                        errorMessage = "Por favor, complete todos los campos obligatorios."
+                        errorMessage = personalError
                         showErrorDialog = true
                     }
                 },
@@ -200,7 +215,7 @@ fun PersonalDataScreen() {
                     .fillMaxWidth()
                     .height(56.dp)
             ) {
-                Text("Siguiente")
+                Text(stringResource(R.string.next_button))
             }
         }
     }
@@ -209,11 +224,11 @@ fun PersonalDataScreen() {
     if (showErrorDialog) {
         AlertDialog(
             onDismissRequest = { showErrorDialog = false },
-            title = { Text("Error") },
+            title = { Text(stringResource(R.string.error_title)) },
             text = { Text(errorMessage) },
             confirmButton = {
                 Button(onClick = { showErrorDialog = false }) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok_button))
                 }
             }
         )
@@ -221,23 +236,31 @@ fun PersonalDataScreen() {
 }
 
 // Función para validar campos
-fun validatePersonalDataFields(firstName: String, lastName: String, birthDate: Long?): Boolean {
-    return firstName.isNotBlank() && lastName.isNotBlank() && birthDate != null
+fun validateFields(
+    firstName: String,
+    lastName: String,
+    birthDate: Long?
+): Boolean {
+    return firstName.isNotEmpty() && lastName.isNotEmpty() && birthDate != null && birthDate != 0L
 }
 
 // Función para hacer logging de los datos personales
-fun logPersonalData(firstName: String, lastName: String, birthDate: Long?, gender: String, educationLevel: String) {
+fun logUserData(
+    context: android.content.Context,
+    firstName: String,
+    lastName: String,
+    birthDate: Long?,
+    gender: String,
+    educationLevel: String
+) {
     Log.d("PersonalData", """
-        Nombres: $firstName
-        Apellidos: $lastName
-        Fecha de nacimiento: ${formatDate(birthDate)}
-        Sexo: $gender
-        Grado de escolaridad: $educationLevel
+        ${context.getString(R.string.first_name_label)}: $firstName
+        ${context.getString(R.string.last_name_label)}: $lastName
+        ${context.getString(R.string.birthdate_selected)}: ${formatDate(birthDate)}
+        ${context.getString(R.string.gender_label)}: $gender
+        ${context.getString(R.string.education_level_label)}: $educationLevel
     """.trimIndent())
 }
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -254,12 +277,12 @@ fun DatePickerModal(
                 onDateSelected(datePickerState.selectedDateMillis)
                 onDismiss()
             }) {
-                Text("Aceptar")
+                Text(stringResource(R.string.accept_button))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+                Text(stringResource(R.string.cancel_button))
             }
         }
     ) {
@@ -274,30 +297,6 @@ fun formatDate(timestamp: Long?): String {
     } else {
         "N/A"
     }
-}
-
-fun validateFields(
-    firstName: String,
-    lastName: String,
-    birthDate: Long?
-): Boolean {
-    return firstName.isNotEmpty() && lastName.isNotEmpty() && birthDate != 0L
-}
-
-fun logUserData(
-    firstName: String,
-    lastName: String,
-    birthDate: Long?,
-    gender: String,
-    educationLevel: String
-) {
-    Log.d("PersonalData", """
-        Nombres: $firstName
-        Apellidos: $lastName
-        Fecha de nacimiento: ${formatDate(birthDate)}
-        Sexo: $gender
-        Grado de escolaridad: $educationLevel
-    """.trimIndent())
 }
 
 @Composable

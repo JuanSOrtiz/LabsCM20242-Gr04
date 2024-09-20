@@ -1,7 +1,5 @@
 package com.example.labs20242_gr04
 
-
-
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -65,7 +64,7 @@ fun ContactDataScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Datos de Contacto") }
+                title = { Text(text = stringResource(R.string.contact_data_title)) }
             )
         }
     ) { paddingValues ->
@@ -92,7 +91,7 @@ fun ContactDataScreen(
                 onClick = {
                     // Registrar los datos en el Logcat
                     logAllUserData(
-                        firstName, lastName, birthDate, gender, educationLevel,
+                        context, firstName, lastName, birthDate, gender, educationLevel,
                         phoneNumber, address, email, country, city
                     )
                 },
@@ -101,7 +100,7 @@ fun ContactDataScreen(
                     .height(56.dp)
                     .padding(vertical = 16.dp)
             ) {
-                Text("Guardar")
+                Text(stringResource(R.string.save_button))
             }
         }
     }
@@ -109,20 +108,21 @@ fun ContactDataScreen(
 
 // Función para registrar los datos en Logcat
 fun logAllUserData(
+    context: android.content.Context,
     firstName: String, lastName: String, birthDate: Long, gender: String, educationLevel: String,
     phoneNumber: String, address: String, email: String, country: String, city: String
 ) {
     Log.d("ContactData", """
-        Nombres: $firstName
-        Apellidos: $lastName
-        Fecha de nacimiento: ${formatDate(birthDate)}
-        Sexo: $gender
-        Grado de escolaridad: $educationLevel
-        Teléfono: $phoneNumber
-        Dirección: $address
-        Email: $email
-        País: $country
-        Ciudad: $city
+        ${context.getString(R.string.first_name_label)}: $firstName
+        ${context.getString(R.string.last_name_label)}: $lastName
+        ${context.getString(R.string.birthdate_selected)}: ${formatDate(birthDate)}
+        ${context.getString(R.string.gender_label)}: $gender
+        ${context.getString(R.string.education_level_label)}: $educationLevel
+        ${context.getString(R.string.phone_label)}: $phoneNumber
+        ${context.getString(R.string.address_label)}: $address
+        ${context.getString(R.string.email_label)}: $email
+        ${context.getString(R.string.country_label)}: $country
+        ${context.getString(R.string.city_label)}: $city
     """.trimIndent())
 }
 
@@ -132,6 +132,7 @@ fun formatDate(milliseconds: Long): String {
     return sdf.format(Date(milliseconds))
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormFields(
     phoneNumber: String, onPhoneChange: (String) -> Unit,
@@ -140,11 +141,13 @@ fun FormFields(
     country: String, onCountryChange: (String) -> Unit,
     city: String, onCityChange: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
     // Campo Teléfono (obligatorio)
     OutlinedTextField(
         value = phoneNumber,
         onValueChange = onPhoneChange,
-        label = { Text("Teléfono*") },
+        label = { Text(stringResource(R.string.phone_label)) },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Phone,
             imeAction = ImeAction.Next
@@ -159,7 +162,7 @@ fun FormFields(
     OutlinedTextField(
         value = address,
         onValueChange = onAddressChange,
-        label = { Text("Dirección") },
+        label = { Text(stringResource(R.string.address_label)) },
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Next,
             autoCorrect = false
@@ -173,7 +176,7 @@ fun FormFields(
     OutlinedTextField(
         value = email,
         onValueChange = onEmailChange,
-        label = { Text("Email*") },
+        label = { Text(stringResource(R.string.email_label)) },
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Next
@@ -197,7 +200,9 @@ fun FormFields(
 @Composable
 fun CountryDropdown(country: String, onCountryChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    val countries = listOf("Argentina", "Brasil", "Chile", "Colombia", "Ecuador", "México", "Perú", "Venezuela")
+    val countries = listOf(
+        "Argentina", "Brasil", "Chile", "Colombia", "Ecuador", "México", "Perú", "Venezuela"
+    )
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -206,7 +211,7 @@ fun CountryDropdown(country: String, onCountryChange: (String) -> Unit) {
         OutlinedTextField(
             value = country,
             onValueChange = { },
-            label = { Text("País*") },
+            label = { Text(stringResource(R.string.country_label)) },
             readOnly = true,
             modifier = Modifier
                 .menuAnchor()
@@ -238,7 +243,9 @@ fun CountryDropdown(country: String, onCountryChange: (String) -> Unit) {
 @Composable
 fun CityDropdown(city: String, onCityChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    val cities = listOf("Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Bucaramanga", "Pereira")
+    val cities = listOf(
+        "Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Bucaramanga", "Pereira"
+    )
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -247,7 +254,7 @@ fun CityDropdown(city: String, onCityChange: (String) -> Unit) {
         OutlinedTextField(
             value = city,
             onValueChange = { },
-            label = { Text("Ciudad") },
+            label = { Text(stringResource(R.string.city_label)) },
             readOnly = true,
             modifier = Modifier
                 .menuAnchor()

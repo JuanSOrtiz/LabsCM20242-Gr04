@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="contact_data_title">Contact Data</string>
+    <string name="personal_data_title">Personal Data</string>
+    <string name="phone_label">Phone*</string>
+    <string name="address_label">Address</string>
+    <string name="email_label">Email*</string>
+    <string name="country_label">Country*</string>
+    <string name="city_label">City</string>
+    <string name="save_button">Save</string>
+    <string name="error_title">Error</string>
+    <string name="error_message">Please complete all required fields.</string>
+    <string name="ok_button">OK</string>
+    <string name="next_button">Next</string>
+    <string name="first_name_label">First Name*</string>
+    <string name="last_name_label">Last Name*</string>
+    <string name="gender_label">Gender</string>
+    <string name="birthdate_selected">Birth Date: %1$s</string>
+    <string name="birthdate_not_selected">No birth date selected</string>
+    <string name="select_birthdate_button">Select Birth Date*</string>
+    <string name="personal_error">Please complete all required fields.</string>
+    <string name="accept_button">Accept</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="masculino">Male</string>
+    <string name="femenino">Female</string>
+    <string name="otro">Other</string>
+    <string name="primaria">Primary</string>
+    <string name="secundaria">Secondary</string>
+    <string name="universitaria">University</string>
+    <string name="posgrado">Postgraduate</string>
+    <string name="education_level_label">Education Level*</string>
+</resources>
