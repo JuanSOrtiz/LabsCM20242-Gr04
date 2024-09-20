@@ -192,7 +192,7 @@ fun FormFields(
     Spacer(modifier = Modifier.height(16.dp))
 
     // Campo Ciudad
-    CityDropdown(city, onCityChange)
+    CityDropdown(city, country, onCityChange)
     Spacer(modifier = Modifier.height(16.dp))
 }
 
@@ -241,11 +241,23 @@ fun CountryDropdown(country: String, onCountryChange: (String) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CityDropdown(city: String, onCityChange: (String) -> Unit) {
+fun CityDropdown(city: String, country: String, onCityChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    val cities = listOf(
-        "Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Bucaramanga", "Pereira"
+
+    // Mapa de ciudades por país
+    val citiesByCountry = mapOf(
+        "Argentina" to listOf("Buenos Aires", "Córdoba", "Rosario"),
+        "Brasil" to listOf("São Paulo", "Rio de Janeiro", "Brasilia"),
+        "Chile" to listOf("Santiago", "Valparaíso", "Concepción"),
+        "Colombia" to listOf("Bogotá", "Medellín", "Cali"),
+        "Ecuador" to listOf("Quito", "Guayaquil", "Cuenca"),
+        "México" to listOf("Ciudad de México", "Guadalajara", "Monterrey"),
+        "Perú" to listOf("Lima", "Arequipa", "Cusco"),
+        "Venezuela" to listOf("Caracas", "Maracaibo", "Valencia")
     )
+
+    // Obtener las ciudades correspondientes al país seleccionado
+    val cities = citiesByCountry[country] ?: listOf()
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -262,7 +274,8 @@ fun CityDropdown(city: String, onCityChange: (String) -> Unit) {
                 .clickable { expanded = !expanded },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            }
+            },
+            isError = city.isEmpty()
         )
         ExposedDropdownMenu(
             expanded = expanded,
